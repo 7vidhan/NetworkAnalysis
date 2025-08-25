@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    justify-content: space-around;
+    font-family: sans-serif;
+    background: #fff;
+    margin: 0;
+    padding: 20px;
+}
+.panel {
+    text-align: center;
+}
+svg {
+    background: #fff;
+    border: 0px solid #ccc;
+    margin-top: 10px;
+}
+.node {
+    fill: #f0e6c8;
+    stroke: #000;
+}
+.node.highlight {
+    fill: #e5da76;
+}
+.link {
+    stroke: #aad;
+}
+.link.highlight {
+    stroke: #08306b;
+    stroke-width: 3px;
+}
+
+.row-label.highlight,
+.col-label.highlight{
+    fill: #000; /* bright color for visibility */
+    font-weight: bold;
+    font-size: 16px;
+}
+.node-label.highlight {
+    fill: #000; /* bright color for visibility */
+    font-weight: bold;
+    font-size: 18px;
+}
+.node.selected {
+    fill: #d6a510; /* or any distinct color */
+    stroke: #000;
+    stroke-width: 2px;
+}

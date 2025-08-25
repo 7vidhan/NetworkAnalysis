@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<style>
+svg {
+  border: 2px solid black;
+}
+</style>
+<svg width="1000" height="600"></svg>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const svg = d3.select("svg");
+const width = +svg.attr("width");
+const height = +svg.attr("height");
+
+d3.csv("../asset/edges.csv").then(data => {
+    // Create links array
+    const links = data.map(d => ({
+        source: d.member1,
+        target: d.member2
+    }));
+
+    // Create unique nodes array
+    const nodes = Array.from(
+        new Set(links.flatMap(l => [l.source, l.target])),
+        id => ({id})
+    );
+
+    // Create D3 force simulation
+    const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(30))
+        .force("charge", d3.forceManyBody().strength(-50))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("x", d3.forceX(width / 2).strength(0.20))
+        .force("y", d3.forceY(height / 2).strength(0.30))
+        .force("collide", d3.forceCollide().radius(3));
+
+    // Draw links
+    const link = svg.append("g")
+        .attr("stroke", "#999")
+        .attr("stroke-opacity", 0.6)
+        .selectAll("line")
+        .data(links)
+        .join("line")
+        .attr("stroke-width", 1);
+
+    // Draw nodes
+    const node = svg.append("g")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+        .selectAll("circle")
+        .data(nodes)
+        .join("circle")
+        .attr("r", 3)
+        .attr("fill", "steelblue");
+
+    // Add simulation tick
+    simulation.on("tick", () => {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+    });
+});
+</script>
+</body>
