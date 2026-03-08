@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 1000px;
+                 height: 700px;
+                 background-color: white;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "black"}, "group": 2, "id": "Muzan", "label": "Muzan", "shape": "dot", "size": 17}, {"font": {"color": "black"}, "group": 2, "id": "Akaza", "label": "Akaza", "shape": "dot", "size": 14}, {"font": {"color": "black"}, "group": 2, "id": "Omitsu", "label": "Omitsu", "shape": "dot", "size": 14}, {"font": {"color": "black"}, "group": 2, "id": "Zenitsu", "label": "Zenitsu", "shape": "dot", "size": 25}, {"font": {"color": "black"}, "group": 1, "id": "Tanjiro", "label": "Tanjiro", "shape": "dot", "size": 34}, {"font": {"color": "black"}, "group": 4, "id": "Daki", "label": "Daki", "shape": "dot", "size": 23}, {"font": {"color": "black"}, "group": 4, "id": "Nezuko", "label": "Nezuko", "shape": "dot", "size": 19}, {"font": {"color": "black"}, "group": 3, "id": "Kagaya", "label": "Kagaya", "shape": "dot", "size": 13}, {"font": {"color": "black"}, "group": 1, "id": "Kyojuro", "label": "Kyojuro", "shape": "dot", "size": 19}, {"font": {"color": "black"}, "group": 2, "id": "Obanai", "label": "Obanai", "shape": "dot", "size": 13}, {"font": {"color": "black"}, "group": 1, "id": "Shinjuro", "label": "Shinjuro", "shape": "dot", "size": 13}, {"font": {"color": "black"}, "group": 1, "id": "Senjuro", "label": "Senjuro", "shape": "dot", "size": 13}, {"font": {"color": "black"}, "group": 1, "id": "Hotaru", "label": "Hotaru", "shape": "dot", "size": 12}, {"font": {"color": "black"}, "group": 1, "id": "Giyu", "label": "Giyu", "shape": "dot", "size": 12}, {"font": {"color": "black"}, "group": 3, "id": "Tengen", "label": "Tengen", "shape": "dot", "size": 31}, {"font": {"color": "black"}, "group": 4, "id": "Inosuke", "label": "Inosuke", "shape": "dot", "size": 19}, {"font": {"color": "black"}, "group": 3, "id": "Kiyo", "label": "Kiyo", "shape": "dot", "size": 15}, {"font": {"color": "black"}, "group": 3, "id": "Shinobu", "label": "Shinobu", "shape": "dot", "size": 15}, {"font": {"color": "black"}, "group": 0, "id": "Koinatsu", "label": "Koinatsu", "shape": "dot", "size": 16}, {"font": {"color": "black"}, "group": 0, "id": "Hinatsuru", "label": "Hinatsuru", "shape": "dot", "size": 18}, {"font": {"color": "black"}, "group": 0, "id": "Suma", "label": "Suma", "shape": "dot", "size": 17}, {"font": {"color": "black"}, "group": 4, "id": "Gyutaro", "label": "Gyutaro", "shape": "dot", "size": 18}, {"font": {"color": "black"}, "group": 3, "id": "Naho", "label": "Naho", "shape": "dot", "size": 14}, {"font": {"color": "black"}, "group": 3, "id": "Aoi", "label": "Aoi", "shape": "dot", "size": 14}, {"font": {"color": "black"}, "group": 1, "id": "Sakonji", "label": "Sakonji", "shape": "dot", "size": 12}, {"font": {"color": "black"}, "group": 1, "id": "Hanako", "label": "Hanako", "shape": "dot", "size": 11}, {"font": {"color": "black"}, "group": 4, "id": "Takeo", "label": "Takeo", "shape": "dot", "size": 13}, {"font": {"color": "black"}, "group": 4, "id": "Chachamaru", "label": "Chachamaru", "shape": "dot", "size": 12}, {"font": {"color": "black"}, "group": 4, "id": "Tamayo", "label": "Tamayo", "shape": "dot", "size": 15}, {"font": {"color": "black"}, "group": 0, "id": "Makio", "label": "Makio", "shape": "dot", "size": 14}, {"font": {"color": "black"}, "group": 3, "id": "Sumi", "label": "Sumi", "shape": "dot", "size": 12}, {"font": {"color": "black"}, "group": 3, "id": "Kanao", "label": "Kanao", "shape": "dot", "size": 13}]);
+                  edges = new vis.DataSet([{"from": "Muzan", "to": "Akaza", "value": 3, "width": 1}, {"from": "Muzan", "to": "Omitsu", "value": 5, "width": 1}, {"from": "Muzan", "to": "Zenitsu", "value": 5, "width": 1}, {"from": "Muzan", "to": "Tanjiro", "value": 10, "width": 1}, {"from": "Muzan", "to": "Daki", "value": 6, "width": 1}, {"from": "Muzan", "to": "Nezuko", "value": 6, "width": 1}, {"from": "Muzan", "to": "Kagaya", "value": 6, "width": 1}, {"from": "Akaza", "to": "Kyojuro", "value": 4, "width": 1}, {"from": "Akaza", "to": "Zenitsu", "value": 5, "width": 1}, {"from": "Akaza", "to": "Obanai", "value": 5, "width": 1}, {"from": "Kyojuro", "to": "Zenitsu", "value": 5, "width": 1}, {"from": "Kyojuro", "to": "Tanjiro", "value": 36, "width": 1}, {"from": "Kyojuro", "to": "Shinjuro", "value": 11, "width": 1}, {"from": "Kyojuro", "to": "Senjuro", "value": 22, "width": 1}, {"from": "Kyojuro", "to": "Hotaru", "value": 5, "width": 1}, {"from": "Kyojuro", "to": "Giyu", "value": 5, "width": 1}, {"from": "Kyojuro", "to": "Daki", "value": 6, "width": 1}, {"from": "Kyojuro", "to": "Tengen", "value": 6, "width": 1}, {"from": "Zenitsu", "to": "Tanjiro", "value": 37, "width": 1}, {"from": "Zenitsu", "to": "Inosuke", "value": 84, "width": 1}, {"from": "Zenitsu", "to": "Kiyo", "value": 6, "width": 1}, {"from": "Zenitsu", "to": "Shinobu", "value": 6, "width": 1}, {"from": "Zenitsu", "to": "Tengen", "value": 66, "width": 1}, {"from": "Zenitsu", "to": "Koinatsu", "value": 5, "width": 1}, {"from": "Zenitsu", "to": "Hinatsuru", "value": 5, "width": 1}, {"from": "Zenitsu", "to": "Omitsu", "value": 5, "width": 1}, {"from": "Zenitsu", "to": "Suma", "value": 6, "width": 1}, {"from": "Zenitsu", "to": "Daki", "value": 27, "width": 1}, {"from": "Zenitsu", "to": "Gyutaro", "value": 6, "width": 1}, {"from": "Zenitsu", "to": "Nezuko", "value": 6, "width": 1}, {"from": "Tanjiro", "to": "Inosuke", "value": 50, "width": 1}, {"from": "Tanjiro", "to": "Kiyo", "value": 5, "width": 1}, {"from": "Tanjiro", "to": "Shinobu", "value": 6, "width": 1}, {"from": "Tanjiro", "to": "Senjuro", "value": 61, "width": 1}, {"from": "Tanjiro", "to": "Shinjuro", "value": 23, "width": 1}, {"from": "Tanjiro", "to": "Hotaru", "value": 6, "width": 1}, {"from": "Tanjiro", "to": "Tengen", "value": 93, "width": 1}, {"from": "Tanjiro", "to": "Naho", "value": 10, "width": 1}, {"from": "Tanjiro", "to": "Aoi", "value": 5, "width": 1}, {"from": "Tanjiro", "to": "Koinatsu", "value": 43, "width": 1}, {"from": "Tanjiro", "to": "Suma", "value": 11, "width": 1}, {"from": "Tanjiro", "to": "Daki", "value": 66, "width": 1}, {"from": "Tanjiro", "to": "Nezuko", "value": 55, "width": 1}, {"from": "Tanjiro", "to": "Sakonji", "value": 5, "width": 1}, {"from": "Tanjiro", "to": "Hanako", "value": 11, "width": 1}, {"from": "Tanjiro", "to": "Takeo", "value": 6, "width": 1}, {"from": "Tanjiro", "to": "Gyutaro", "value": 68, "width": 1}, {"from": "Tanjiro", "to": "Hinatsuru", "value": 12, "width": 1}, {"from": "Tanjiro", "to": "Chachamaru", "value": 6, "width": 1}, {"from": "Tanjiro", "to": "Tamayo", "value": 5, "width": 1}, {"from": "Tanjiro", "to": "Obanai", "value": 6, "width": 1}, {"from": "Inosuke", "to": "Tengen", "value": 77, "width": 1}, {"from": "Inosuke", "to": "Makio", "value": 5, "width": 1}, {"from": "Inosuke", "to": "Daki", "value": 34, "width": 1}, {"from": "Inosuke", "to": "Suma", "value": 5, "width": 1}, {"from": "Inosuke", "to": "Gyutaro", "value": 11, "width": 1}, {"from": "Inosuke", "to": "Nezuko", "value": 6, "width": 1}, {"from": "Inosuke", "to": "Shinobu", "value": 5, "width": 1}, {"from": "Kiyo", "to": "Tengen", "value": 6, "width": 1}, {"from": "Kiyo", "to": "Sumi", "value": 6, "width": 1}, {"from": "Kiyo", "to": "Shinobu", "value": 5, "width": 1}, {"from": "Shinobu", "to": "Tengen", "value": 5, "width": 1}, {"from": "Senjuro", "to": "Shinjuro", "value": 12, "width": 1}, {"from": "Tengen", "to": "Aoi", "value": 18, "width": 1}, {"from": "Tengen", "to": "Kanao", "value": 6, "width": 1}, {"from": "Tengen", "to": "Naho", "value": 5, "width": 1}, {"from": "Tengen", "to": "Sumi", "value": 6, "width": 1}, {"from": "Tengen", "to": "Koinatsu", "value": 6, "width": 1}, {"from": "Tengen", "to": "Suma", "value": 23, "width": 1}, {"from": "Tengen", "to": "Makio", "value": 35, "width": 1}, {"from": "Tengen", "to": "Omitsu", "value": 5, "width": 1}, {"from": "Tengen", "to": "Hinatsuru", "value": 46, "width": 1}, {"from": "Tengen", "to": "Nezuko", "value": 47, "width": 1}, {"from": "Tengen", "to": "Daki", "value": 49, "width": 1}, {"from": "Tengen", "to": "Gyutaro", "value": 104, "width": 1}, {"from": "Tengen", "to": "Kagaya", "value": 6, "width": 1}, {"from": "Tengen", "to": "Tamayo", "value": 5, "width": 1}, {"from": "Tengen", "to": "Obanai", "value": 5, "width": 1}, {"from": "Aoi", "to": "Naho", "value": 30, "width": 1}, {"from": "Aoi", "to": "Kanao", "value": 11, "width": 1}, {"from": "Naho", "to": "Kanao", "value": 10, "width": 1}, {"from": "Koinatsu", "to": "Suma", "value": 5, "width": 1}, {"from": "Koinatsu", "to": "Daki", "value": 12, "width": 1}, {"from": "Koinatsu", "to": "Hinatsuru", "value": 5, "width": 1}, {"from": "Suma", "to": "Makio", "value": 12, "width": 1}, {"from": "Suma", "to": "Hinatsuru", "value": 12, "width": 1}, {"from": "Makio", "to": "Hinatsuru", "value": 12, "width": 1}, {"from": "Hinatsuru", "to": "Daki", "value": 10, "width": 1}, {"from": "Hinatsuru", "to": "Gyutaro", "value": 27, "width": 1}, {"from": "Omitsu", "to": "Daki", "value": 12, "width": 1}, {"from": "Daki", "to": "Nezuko", "value": 66, "width": 1}, {"from": "Daki", "to": "Tamayo", "value": 6, "width": 1}, {"from": "Daki", "to": "Takeo", "value": 5, "width": 1}, {"from": "Daki", "to": "Gyutaro", "value": 33, "width": 1}, {"from": "Nezuko", "to": "Tamayo", "value": 5, "width": 1}, {"from": "Nezuko", "to": "Takeo", "value": 5, "width": 1}, {"from": "Nezuko", "to": "Gyutaro", "value": 10, "width": 1}, {"from": "Sakonji", "to": "Giyu", "value": 6, "width": 1}, {"from": "Tamayo", "to": "Chachamaru", "value": 6, "width": 1}, {"from": "Gyutaro", "to": "Kagaya", "value": 5, "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 200,
+            "springConstant": 0.05,
+            "springLength": 200
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

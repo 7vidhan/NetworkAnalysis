@@ -1,72 +1,87 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Network Graph with Cytoscape + Cola</title>
+
+  <!-- Cytoscape.js -->
+  <script src="https://unpkg.com/cytoscape@3.25.0/dist/cytoscape.min.js"></script>
+
+  <!-- WebCola library -->
+  <script src="https://unpkg.com/webcola/WebCola/cola.min.js"></script>
+
+  <!-- Cytoscape Cola extension -->
+  <script src="https://unpkg.com/cytoscape-cola@2.5.0/cytoscape-cola.js"></script>
+
+  <style>
+    #cy { width: 100%; height: 600px; border: 1px solid black; }
+    .highlighted { background-color: red !important; line-color: red !important; }
+    .selected { background-color: orange !important; }
+  </style>
+</head>
 <body>
-<style>
-svg {
-  border: 2px solid black;
-}
-</style>
-<svg width="1000" height="600"></svg>
+  <div id="cy"></div>
 
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-const svg = d3.select("svg");
-const width = +svg.attr("width");
-const height = +svg.attr("height");
+  <script>
+    const nodesURL = "https://raw.githubusercontent.com/7vidhan/NetworkAnalysis/main/webpage/asset/nodes.csv";
+    const edgesURL = "https://raw.githubusercontent.com/7vidhan/NetworkAnalysis/main/webpage/asset/edges.csv";
 
-d3.csv("../asset/edges.csv").then(data => {
-    // Create links array
-    const links = data.map(d => ({
-        source: d.member1,
-        target: d.member2
-    }));
+    let elements = { nodes: [], edges: [] };
 
-    // Create unique nodes array
-    const nodes = Array.from(
-        new Set(links.flatMap(l => [l.source, l.target])),
-        id => ({id})
-    );
+    fetch(nodesURL)
+      .then(r => r.text())
+      .then(text => {
+        const lines = text.trim().split("\n").slice(1);
+        elements.nodes = lines.map(id => ({ data: { id: id.trim() } }));
+        return fetch(edgesURL);
+      })
+      .then(r => r.text())
+      .then(text => {
+        const lines = text.trim().split("\n").slice(1);
+        elements.edges = lines.map(line => {
+          const [source, target] = line.split(",");
+          return { data: { source: source.trim(), target: target.trim() } };
+        });
+        initCytoscape(elements);
+      });
 
-    // Create D3 force simulation
-    const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(30))
-        .force("charge", d3.forceManyBody().strength(-50))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("x", d3.forceX(width / 2).strength(0.20))
-        .force("y", d3.forceY(height / 2).strength(0.30))
-        .force("collide", d3.forceCollide().radius(3));
+    function initCytoscape(elements) {
+      const cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: elements,
+        style: [
+          { selector: 'node', style: { 'background-color': '#0074D9', 'label': 'data(id)', 'width': 20, 'height': 20, 'text-valign': 'center', 'color': '#fff', 'font-size': 8 } },
+          { selector: 'edge', style: { 'line-color': '#ccc', 'width': 1 } },
+          { selector: '.highlighted', style: { 'background-color': 'red', 'line-color': 'red' } },
+          { selector: '.selected', style: { 'background-color': 'orange' } }
+        ],
+        layout: {
+          name: 'cola',
+          nodeSpacing: 20,
+          edgeLengthVal: 40,
+          animate: true,
+          randomize: false,
+          maxSimulationTime: 4000
+        }
+      });
 
-    // Draw links
-    const link = svg.append("g")
-        .attr("stroke", "#999")
-        .attr("stroke-opacity", 0.6)
-        .selectAll("line")
-        .data(links)
-        .join("line")
-        .attr("stroke-width", 1);
+      cy.on('mouseover', 'node', evt => {
+        const node = evt.target;
+        node.addClass('highlighted');
+        node.connectedEdges().addClass('highlighted');
+      });
 
-    // Draw nodes
-    const node = svg.append("g")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
-        .selectAll("circle")
-        .data(nodes)
-        .join("circle")
-        .attr("r", 3)
-        .attr("fill", "steelblue");
+      cy.on('mouseout', 'node', evt => {
+        const node = evt.target;
+        node.removeClass('highlighted');
+        node.connectedEdges().removeClass('highlighted');
+      });
 
-    // Add simulation tick
-    simulation.on("tick", () => {
-        link
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y);
-
-        node
-            .attr("cx", d => d.x)
-            .attr("cy", d => d.y);
-    });
-});
-</script>
+      cy.on('tap', 'node', evt => {
+        const node = evt.target;
+        node.toggleClass('selected');
+      });
+    }
+  </script>
 </body>
+</html>

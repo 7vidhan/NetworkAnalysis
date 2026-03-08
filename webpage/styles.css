@@ -10,38 +10,51 @@ body {
     text-align: center;
 }
 svg {
-    background: #fff;
+    background: #88539e;
     border: 0px solid #ccc;
     margin-top: 10px;
 }
 .node {
-    fill: #f0e6c8;
+    fill: #bea65e;
     stroke: #000;
 }
 .node.highlight {
-    fill: #e5da76;
+    fill: #0c0b00;
 }
 .link {
     stroke: #aad;
 }
 .link.highlight {
-    stroke: #08306b;
-    stroke-width: 3px;
+    stroke: #7db368;
+    stroke-width: 2px;
 }
 
-.row-label.highlight,
-.col-label.highlight{
-    fill: #000; /* bright color for visibility */
-    font-weight: bold;
-    font-size: 16px;
-}
-.node-label.highlight {
-    fill: #000; /* bright color for visibility */
-    font-weight: bold;
-    font-size: 18px;
-}
 .node.selected {
-    fill: #d6a510; /* or any distinct color */
+    fill: #ebeae6; /* or any distinct color */
     stroke: #000;
     stroke-width: 2px;
+}
+
+.node.normal {
+    fill: green;
+}
+
+.node.infected {
+    fill: red;
+}
+
+.node.risky{
+    fill: orange; opacity: 0.5;
+}
+
+.node.people {
+    fill: rgb(143, 226, 143);
+}
+
+.node.influencer {
+    fill: rgb(10, 10, 236);
+}
+
+.node.crowd {
+    fill: rgb(227, 139, 211); opacity: 0.5;
 }
